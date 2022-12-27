@@ -16,6 +16,22 @@
       cursor: pointer;
     }
     
+    .sampleurl {
+      display: flex;
+      justify-content: center;
+    }
+    .para1 {
+      font-size: 13px;
+      
+    }
+    .para2 {
+      font-size: 15px;
+      font-weight: bold;
+    }
+    .para3 {
+      font-size: 13px;
+      font-weight: bold;
+    }
     .button:active {
       background: #0db1fd;
     }
@@ -31,6 +47,19 @@
       opacity: 0;
     }
     
+    .bace_title {
+      margin-left: 530px;
+    background-color: blue;
+    color: #fff;
+    padding: 5px 10px;
+    text-decoration: none;
+    border-radius: 7px;
+    cursor: context-menu;
+    }
+    .bace_title:hover {
+      color: #fff !important;
+    }
+
     .button--loading::after {
       content: "";
       position: absolute;
@@ -61,7 +90,7 @@
   </head>
   <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-dark header">
-      <a href="#" style="margin-left: 530px;" class="btn btn-primary bace_title">Transcribe Youtube Video subtitles to text</a>
+      <a href="#" style="margin-left: 530px;" class="bace_title">Transcribe Youtube Video subtitles to text</a>
     </nav>
     <div class="d-flex justify-content-center mt-5 upload_file_box">
       <div class="card upload_box p-3" style="width: 30rem;">
@@ -70,7 +99,10 @@
           {% csrf_token %}
           <input type="hidden" name="csrfviewmiddlewaretoken" value="DYKRq3YhW6q00aAFCPhkY0OYuwRCi2w87cOQg7Bm4wNZZBtt6MrhScwk5fyyztk0">
           <div class="formgroup">
-          <label class="" for="id_urlid">Url Id:</label>
+            <div class="sampleurl">
+              <p class="para3" style="color:black;">Sample URL Id: <p class="para1" style="color:black;"> https://www.youtube.com/watch?v=<p class="para2" style="color:red;">Y8Tko2YC5hA</p></p></p>
+            </div>
+          <label class="" for="id_urlid">URL Id:</label>
           <input class="" type="text" name="urlid" maxlength="255" required="" id="id_urlid">
         
           <label class="" for="id_title">Title:</label>
@@ -125,5 +157,8 @@
 .upload_box {
     border-radius: 20px;
     box-shadow: rgb(14 30 37 / 12%) 0px 2px 4px 0px, rgb(14 30 37 / 32%) 0px 2px 16px 0px;
+}
+.sample {
+  display: flex;
 }
 </style>
