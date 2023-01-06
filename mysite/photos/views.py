@@ -3,12 +3,8 @@ from pytube import YouTube
 from django.http import HttpResponse
 from .forms import transcriptForm, generate_transcriptForm
 from .models import transcript, generate_transcript
-import speech_recognition as sr
-import wave, math, contextlib
-import speech_recognition as sr
-from moviepy.editor import AudioFileClip
+import whisper
 from youtube_transcript_api import YouTubeTranscriptApi
-
 
 # Create your views here.
 def index(request):
@@ -16,8 +12,7 @@ def index(request):
 
 def audio_conversion(request):
     linkdocuments = transcript.objects.all()
-    #rank = Document.objects.latest('id')
-    #print(rank)
+
     for obj in linkdocuments:
         baseurls = obj.url
         tittle = obj.tittle
@@ -30,35 +25,13 @@ def audio_conversion(request):
         print("Connection Error")
     yt.streams.filter(file_extension='mp4')
     stream = yt.streams.get_by_itag(139)
-    stream.download('',"/var/www/video/yt/media/video/test.mp4")
-
-    #src = "./media/video/test.mp4"
-    #dst = "./media/video/test.wav"
-
-    transcribed_audio_file_name = "/var/www/video/yt/media/video/test.wav"
-    zoom_video_file_name = "/var/www/video/yt/media/video/test.mp4"
-
-    audioclip = AudioFileClip(zoom_video_file_name)
-    audioclip.write_audiofile(transcribed_audio_file_name)
-    with contextlib.closing(wave.open(transcribed_audio_file_name,'r')) as f:
-        frames = f.getnframes()
-        rate = f.getframerate()
-        duration = frames / float(rate)
-        total_duration = math.ceil(duration / 60)
-        r = sr.Recognizer()
-    file1 = open("/var/www/video/yt/media/file/sample.txt","w")
-    file1.truncate(0)
-    file1.close()
-    for i in range(0, total_duration):
-        with sr.AudioFile(transcribed_audio_file_name) as source:
-            audio = r.record(source, offset=i*60, duration=60)
-            with open("/var/www/video/yt/media/file/sample.txt", "a") as f:
-                f.write(r.recognize_google(audio))
-                print(r.recognize_google(audio))
-                f.write(" ")
-            f.close()
-                
-    
+    stream.download('',"./media/audio/GoogleImagen.mp4")
+    model = whisper.load_model("base")
+    result = model.transcribe("./media/audio/GoogleImagen.mp4", fp16=False)
+    print(result['text'])
+    text_file = open("./media/file/data.txt", "w")
+    text_file.write(result['text'])
+    text_file.close()
 
     return render(request, 'file.html', { 'linkdocuments': linkdocuments })
 
@@ -66,11 +39,7 @@ def file_upload(request):
     if request.method == 'POST':
         form = transcriptForm(request.POST, request.FILES)
         if form.is_valid():
-            #func_obj = form
-            #func_obj.sourceFile = form.cleaned_data['sourceFile']
             form.save()
-            #print(form.Document.document)
-            #form.save()
             return redirect('audio_conversion')
     else:
         form = transcriptForm()
@@ -80,6 +49,7 @@ def file_upload(request):
 
 def stranscript(id):
 	transcript = YouTubeTranscriptApi.get_transcript(id)
+   
 	script = ""
 
 	for text in transcript:
@@ -88,6 +58,8 @@ def stranscript(id):
 			script += t + " "
 		
 	return script, len(script.split())
+
+
 
 def sub_transcript(request):
     filedocuments = generate_transcript.objects.all()
@@ -100,7 +72,7 @@ def sub_transcript(request):
     #id = 'DInMru2Eq6E'
     transcript, no_of_words = stranscript(id)
     print(transcript)
-    text_file = open("/var/www/video/yt/media/filepage/output.txt", "w")
+    text_file = open("./media/filepage/output.txt", "w")
     text_file.write(transcript)
     text_file.close()
 
